@@ -11,6 +11,8 @@ export default class App extends React.Component {
     super();
     this.state = {
       todos: [],
+      userInput: '',
+      filtered: ''
     }
   }
 
@@ -23,10 +25,23 @@ export default class App extends React.Component {
       .then(res => this.setState({...this.state, todos: res}));
   }
 
+  // handlers
+  handleChange = e => {
+    e.preventDefault();
+    this.setState({...this.state, userInput: e.target.value});
+  }
+
+  handleSubmit = e => {
+    e.preventDefault();
+    axios.post(URL, {name: this.state.userInput})
+      .then(res => res.data.data)
+      .then(res => this.setState({...this.state, todos: [...this.state.todos, res]}));
+  }
+
   render() {
     return (
       <div>
-        <Form />
+        <Form handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
         <TodoList todos={this.state.todos} />
       </div>
     )
